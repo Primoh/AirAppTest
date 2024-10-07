@@ -14,7 +14,7 @@ protocol MainViewModelType {
     var nationInfoPublisher: PassthroughSubject<NationInfo, Never> { get }
     var populationInfoPublisher: CurrentValueSubject<PopulationInfoSection?, Never> { get }
     var loadingVisiblePublisher: CurrentValueSubject<Bool, Never> { get }
-    var yearsList: [String] { get }
+    var yearsListPublisher: CurrentValueSubject<[String], Never> { get }
     
     func viewDidLoad()
     func pickerViewDidSelectedIndex(at row: Int)

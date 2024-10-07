@@ -289,7 +289,8 @@ private extension MainViewController {
             }
             .store(in: &cancellables)
         
-        viewModel.loadingVisiblePublisher
+        viewModel
+            .loadingVisiblePublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] isVisible in
                 guard let self else { return }
@@ -301,6 +302,14 @@ private extension MainViewController {
                 isVisible
                 ? activityIndicator.startAnimating()
                 : activityIndicator.stopAnimating()
+            }
+            .store(in: &cancellables)
+        
+        viewModel
+            .yearsListPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.pickerView.reloadAllComponents()
             }
             .store(in: &cancellables)
     }
@@ -367,7 +376,7 @@ extension MainViewController: UIPickerViewDataSource {
         _ pickerView: UIPickerView,
         numberOfRowsInComponent component: Int
     ) -> Int {
-        viewModel.yearsList.count
+        viewModel.yearsListPublisher.value.count
     }
 }
 
@@ -385,6 +394,6 @@ extension MainViewController: UIPickerViewDelegate {
         titleForRow row: Int,
         forComponent component: Int
     ) -> String? {
-        viewModel.yearsList[safe: row]
+        viewModel.yearsListPublisher.value[safe: row]
     }
 }

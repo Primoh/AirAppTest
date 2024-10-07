@@ -27,10 +27,11 @@ final class MainViewModel {
     private(set) var nationInfoPublisher = PassthroughSubject<NationInfo, Never>()
     private(set) var populationInfoPublisher = CurrentValueSubject<PopulationInfoSection?, Never>(nil)
     private(set) var loadingVisiblePublisher = CurrentValueSubject<Bool, Never>(false)
-    private(set) var yearsList: [String] = []
+    private(set) var yearsListPublisher = CurrentValueSubject<[String], Never>([])
     
     private var nationDatasInfo: [NationData]?
     private var statesLoadingTask: Task<Void, Never>?
+    private var selectedYear: String?
     
     private let dataUSAService: DataUSAServiceType
     private let flowOutput: MainFlowOutput
@@ -51,7 +52,8 @@ private extension MainViewModel {
             do {
                 let nationModel = try await dataUSAService.getNationInfo()
                 nationDatasInfo = nationModel.data
-                yearsList = nationModel.data.map {  $0.year }
+                yearsListPublisher.send(nationModel.data.map { $0.year })
+                selectedYear = yearsListPublisher.value.first
                 
                 guard
                     let sourceName = nationModel.source.first?.annotations.sourceName
@@ -131,10 +133,14 @@ extension MainViewModel: MainViewModelType {
     }
     
     func pickerViewDidSelectedIndex(at row: Int) {
-        guard let nationInfo = nationDatasInfo?[safe: row] else { return }
+        guard
+            let nationInfo = nationDatasInfo?[safe: row],
+            selectedYear != nationInfo.year
+        else { return }
         
         loadingVisiblePublisher.send(true)
         
+        self.selectedYear = nationInfo.year
         updateCurrentNationInfo(with: nationInfo)
         updateCurrentPopulationStatesInfo(to: nationInfo.year)
     }
