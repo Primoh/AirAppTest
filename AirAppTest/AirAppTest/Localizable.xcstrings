@@ -1,0 +1,27 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Error on Nation Request" : {
+
+    },
+    "Error on States Request" : {
+
+    },
+    "OK" : {
+
+    },
+    "Population" : {
+
+    },
+    "Population: %lld" : {
+
+    },
+    "State" : {
+
+    },
+    "Year: %@" : {
+
+    }
+  },
+  "version" : "1.0"
+}
